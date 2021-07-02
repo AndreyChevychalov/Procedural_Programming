@@ -1,56 +1,82 @@
 ﻿#include <iostream>
-#include <cstdlib>
-#include <ctime>
+#include <random>
 
 using namespace std;
 
 /**
- * \brief Функция нахождения случайного числа из заданного интервала
+ * \brief Функция заполнения массива случайными числами из заданного интервала
+ * \param array данный массив
+ * \param size размер массива
  * \param min минимальное случайное число
  * \param max максимальное случайное число
- * \return Возвращает случайное число из заданного интервала
  */
-int random(int min, int max);
+void randomArray(int* array, size_t size);
+
+/**
+ * \brief Функция заполнения массива из ввода с клавиатуры
+ * \param array данный массив
+ * \param size размер массива
+ */
+void inputArray(int* array, size_t size);
+
+/**
+ * \brief Функция вывода массива на экран
+ * \param array данный массив
+ * \param size размер массива
+ */
+void print(int* array, size_t size);
+
+/**
+ * \brief Функция, показывающая, есть ли в числе цифра 1
+ * \param value данное число
+ */
+bool hasOne(int value);
 
 /**
  * \brief Функция замены максимального элемента массива на противоположный по знаку
  * \param array Введённый массив
- * \param num Количество элементов в массиве
- * \return Возвращает массив с максимальным элементом, противоположным по знаку
+ * \param size Количество элементов в массиве
  */
-int* maxFunction(int* array, int num);
+void maxFunction(int* array, const size_t size);
 
 /**
  * \brief Функция нахождения массива в котором после всех элементов, в которых есть цифра 1, вставлен максимальный элемент
  * \param array Введённый массив
- * \param num Количество элементов в массиве
+ * \param size Количество элементов в начальном массиве
+ * \param newSize Количество элементов в конечном массиве
  * \return Возвращает необходимый массив
  */
-int* oneFunction(int* array, int num);
+int* secondTaskFunction(int* array, const size_t size, const size_t newSize);
 
 /**
  * \brief Функция нахождения индекса максимума массива
- * \param elem Введённый массив
- * \param num Количество элементов в массиве
+ * \param array Введённый массив
+ * \param size Количество элементов в массиве
  * \return Возвращает индекс максимума массива
  */
-int maxElement(int* array, int num);
+size_t getMaxIndex(int* array, size_t size);
 
 /**
  * \brief Функция формирования нового массива, сформированного по правилу из 3 задачи
  * \param array Введённый массив
- * \param num Количество элементов в массиве
+ * \param size Количество элементов в массиве
  * \return Возвращает новый массив
  */
-int* newArray(int* array, int n);
+int* newArray(int* array, size_t size);
 
 /**
  * \brief Функция нахождения количества элементов, в которых есть цифра 1
  * \param array Введённый массив
- * \param num Количество элементов в массиве
+ * \param size Количество элементов в массиве
  * \return Возвращает количество элементов, в которых есть цифра 1
  */
-int elementAmmount(int* array, int n);
+size_t elementAmmount(int* array, size_t size);
+
+/**
+ * \brief Функция удаления массива с проверкой на nullptr
+ * \param array Массив
+ */
+void deleteArray(int* array);
 
 /**
  * \brief Точка входа в программу
@@ -58,119 +84,79 @@ int elementAmmount(int* array, int n);
  */
 int main()
 {
-    int n;
     cout << "Enter integer value: ";
-    cin >> n;
-    int* array = new int[n];
+    size_t size;
+    cin >> size;
+    int* array = new int[size];
     cout << "Input 1, if you want random numbers. Input 2 if you want to input numbers manualy: ";
     int answer;
     cin >> answer;
     if (answer == 1)
     {
-        for (int i = 0; i < n; i++)
-        {
-            array[i] = random(-1000, 1000);
-        }
+        randomArray(array, size);
     }
     else if (answer == 2)
     {
-        for (int i = 0; i < n; i++)
-        {
-            cout << "Input element: ";
-            cin >> array[i];
-        }
-    }
-    else
-    {
-        cout << "Input error, array filled with random numbers";
-        for (int i = 0; i < n; i++)
-        {
-            array[i] = random(-1000, 1000);
-        }
-    }
-    array = maxFunction(array, n);
-
-    int* secondArray = new int[n + elementAmmount(array, n)];
-
-    secondArray = oneFunction(array, n);
-
-    int* thirdArray = new int[n + elementAmmount(array, n)];
-
-    for (int i = 0; i < n + elementAmmount(array, n); i++)
-    {
-        cout << i + 1 << ")" << thirdArray[i] << "\n";
+        inputArray(array, size);
     }
 
+    maxFunction(array, size);
+
+    print(array, size);
+   
+    const size_t newSize = size + elementAmmount(array, size);
+
+    int* secondArray = new int[newSize];
+
+    secondArray = secondTaskFunction(array, size, newSize);
+
+    int* thirdArray = new int[newSize];
+
+    print(secondArray, newSize);
+
+    thirdArray = newArray(secondArray, newSize);
+
+    print(thirdArray, newSize);
+
+    deleteArray(array);
+
+    deleteArray(secondArray);
+
+    deleteArray(thirdArray);
+
+    return 0;
 }
 
-int* maxFunction(int* array, int num)
+void maxFunction(int* array, const size_t size)
 {
-    int max = -1000;
-    int index = 0;
-    for (int i = 0; i < num; i++)
-    {
-        if (array[i] > max)
-        {
-            max = array[i];
-            index = i;
-        }
-    }
-    array[index] = -array[index];
-    return array;
+    const size_t maxIndex = getMaxIndex(array, size);
+    array[maxIndex] = -array[maxIndex];
 } 
 
-int random(int min, int max)
+int* secondTaskFunction(int* array, const size_t size, const size_t newSize)
 {
-    srand(time(NULL) + rand());
-
-    int temp = max - min;
-
-    if (temp == 0)
-        temp = 1;
-
-    int value = rand() % temp + min;
-    return value;
-}
-
-int* oneFunction(int* array, int num)
-{
-    int* tempArray = new int[num + elementAmmount(array, num)];
-
-    for (int i = 0; i < num; i++)
+    int* tempArray = new int[newSize];
+    size_t maxIndex = getMaxIndex(array, size);
+    int j = 0;
+    for (int i = 0; i < size; i++)
     {
-        tempArray[i] = array[i];
-    }
+        tempArray[j] = array[i];
 
-    for (int i = 0; i < num + elementAmmount(array, num); i++)
-    {
-        int temp = abs(tempArray[i]);
-        int index = 0;
-        while (temp > 0)
+        if (hasOne(array[i]) == true)
         {
-            if (temp % 10 == 1)
-            {
-                index = 1;
-            }
-            temp = temp / 10;
+            j++;
+            tempArray[j] = array[maxIndex];
         }
-        if (index == 1)
-        {
-            for (int j = num + elementAmmount(array, num); j > i + 1; j = j - 1)
-            {
-                tempArray[j] = tempArray[j - 1];
-            }
-            tempArray[i + 1] = array[maxElement(array, num)];
-            i++;
-        }
+        j++;
     }
     return tempArray;
 }
 
-int maxElement(int* array, int num)
+size_t getMaxIndex(int* array, size_t num)
 {
-    int max = -1000;
-    int index = 0;
-    for (int i = 0; i < num; i++)
+    int max = array[0];
+    size_t index = 0;
+    for (size_t i = 0; i < num; i++)
     {
         if (array[i] > max)
         {
@@ -181,50 +167,88 @@ int maxElement(int* array, int num)
     return index;
 }
 
-int* newArray(int* array, int num)
+int* newArray(int* array, size_t size)
 {
-    int* newArray = new int[num];
-    if (num > 10)
-    {
-        for (int i = 0; i < 11; i++)
+    int const border = 10;
+    int* newArray = new int[size];
+        for (size_t i = 0; i < border + 1; i++)
         {
             newArray[i] = array[i] + i;
         }
-        for (int i = 11; i < num + 1; i++)
+        for (size_t i = border + 1; i < size + 1; i++)
         {
             newArray[i] = array[i] - i;
         }
-    }
-    else
-    {
-        for (int i = 0; i < num + 1; i++)
-        {
-            newArray[i] = array[i] + i;
-        }
-    }
     return newArray;
 }
 
-int elementAmmount(int* array, int n)
+size_t elementAmmount(int* array, size_t n)
 {
-    int ammount = 0;
-    for (int i = 0; i < n; i++)
+    size_t ammount = 0;
+    for (size_t i = 0; i < n; i++)
     {
-        int temp = abs(array[i]);
-        int index = 0;
-        while (temp > 0)
-        {
-            if (temp % 10 == 1)
-            {
-                index = 1;
-            }
-            temp = temp / 10;
-        }
-        if (index == 1)
-        {
-            temp = 0;
+        if (hasOne(array[i]) == true)
             ammount++;
-        }
     }
     return ammount;
+}
+
+void randomArray(int* array, size_t size)
+{
+    cout << "Input minimal value: ";
+    int min;
+    cin >> min;
+    cout << "Input maximal value: ";
+    int max;
+    cin >> max;
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dist(min, max);
+    for (size_t i = 0; i < size; ++i)
+    {
+        array[i] = dist(gen);
+    }
+}
+
+void inputArray(int * array, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        cout << "Input element: ";
+        cin >> array[i];
+    }
+}
+
+void print(int* array, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        cout << i + 1 << ")" << array[i] << "\n";
+    }
+}
+
+bool hasOne(int value)
+{
+    value = abs(value);
+    int index = 0;
+    while (value > 0)
+    {
+        if (value % 10 == 1)
+        {
+            index = 1;
+        }
+        value = value / 10;
+    }
+    if (index == 1)
+        return true;
+    else
+        return false;
+}
+
+void deleteArray(int* array)
+{
+    if (array == nullptr)
+        return
+    delete[] array;
+    array = nullptr;
 }
