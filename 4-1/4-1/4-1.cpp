@@ -80,6 +80,14 @@ int main()
             cin >> array[i];
         }
     }
+    else
+    {
+        cout << "Input error, array filled with random numbers";
+        for (int i = 0; i < n; i++)
+        {
+            array[i] = random(-1000, 1000);
+        }
+    }
     SumFuntction(array, n);
 
     IndexFunction(array, n);
